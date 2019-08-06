@@ -1,0 +1,24 @@
+{
+  "name": "cb-async",
+  "version": "1.0.0",
+  "description": "Creates generic asynchronous/promise style callback handlers with a single function call.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --p tsconfig.es2017.json && tsc --p tsconfig.es6.json && tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitgoeshere.com"
+  },
+  "keywords": [
+    "async",
+    "await",
+    "promise",
+    "callback",
+    "helper",
+    "asynchronous"
+  ],
+  "author": "Levert James Jr.",
+  "license": "MIT"
+}
