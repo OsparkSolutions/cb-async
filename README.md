@@ -1,11 +1,19 @@
-# Callback Async (CB Async) 
-A compact function fo handling callbacks as Promises. Multiple builds, and Typescript files is included for custom builds (see builds below).
+# CB Async: Callback Async
+A compact function for handling callbacks as Promises. Just create the cb-async handler, pass it as your callback, and await the results. 
 
-Examples are in ES2017. Module requires at least ES6 to run. If you need to stay backwards compatible use TypeScript or Babel.  No excuses anymore!
+**No Nesting!, No Wrapping!, Just a handle to the callback!**
+
+Includes multiple builds, Typescript files is included for custom builds (see builds below). Examples are in ES2017. Module requires at least ES6 to run. If you need to stay backwards compatible use TypeScript or Babel.  No excuses anymore!
+
+## Installation
+
+```npm
+npm -i cb-async
+```
 
 ## Basic Usage
 ```javascript
-//ES6
+//ES6 Module:
 import CBAsync from './cb-async/index.js'
 //Node/CommonJS: let CBAsync = require('cb-async')
 
@@ -84,34 +92,63 @@ function checkFBLogin() {
 ### function CBAsync(handler)
 Parameters: 
 
-**handler** (optional) - When provided, this function is executed prior to resolving awaiter/promise. This can be an async function/promise. In which case it will be awaited. The 'this' value is set according the the callback, and all of the callback parameters can be accessed in this function. This is primarily for readability or to potentially branch to a set of different tasks independent of the result thread.  
+**handler** (optional)
+
+When provided, this function is executed prior to resolving awaiter/promise. This can be an async function/promise. In which case it will be awaited. The 'this' value is set according the the callback, and all of the callback parameters can be accessed in this function. This is primarily for readability or to potentially branch to a set of different tasks independent of the result thread. See example below.  
 
 Returns: **Proxy**
-The function returns a 'PromiseLike' proxy that can be provided as a callback function and can be awaited.
 
-### Multiple Callback Parameters
+The function returns a 'PromiseLike' proxy that can be provided as a callback function and can be awaited. The result of the promise is either an value ( 1 callback parameter),  array (multiple callback parameters).
+
+### Multiple Callback Parameters & Pre-Resolution Handler
 When there is only 1 parameter then it is passed back from the await/promise. If there are multiple parameters then an array is passed back. The contents of the array are the parameters in the order they would have been passed to a standard call back.
 
-If you prefer the readability of parameterized results you can do the following:
+Internal:
  ```javascript
-async function doSomething(onCompleted){
-	//something happens here
-	onCompleted(response,data,statusCode);
-}
+/** 
+*** This is an example of using cb-async as a callback with tedious.
+*** Note how the pre-resolution handler is used to close the connection. (Primarily for readability)
+**/
 
-//Create an async callback handler with an internal handler
-let response, data, statusCode; 
-let completed = CBAsync((_res, _data, _status)=>
-	{ response= _res; data= _data; status =_status;});
 
-doSomething(completed);
+	let connection: any
+	connection = await this.connect(config);
+	
+	//Create the callback and immediately code that I want to close the connection when it is done.
+	//Also set my variables using the typical callback style;
+	let err, rows
+	let sqlCB = CBAsync((_err, _count, _rows) =>{
+			connection.close();
+			
+			//Its typically better to just use the results of the cb-async promise. (See below)
+			err = _err;
+			rows = _rows;
+			
+	});
+	
+	//Create the request and pass the asynchronous callback
+	let sqlReq = new Request(proc, sqlCB);
+	sqlReq.addParameter(input.name, TYPES.NVarChar, JSON.stringify(input.value));
+	
+	//Call the proc
+	connection.callProcedure(sqlReq);
+	
+	//Get the results 
+	//Note: When there is only 1 paramter it is returned, not an array
+	let sqlResults = await sqlCB;
 
-//Wait on the handler to finish 
-let results = await completed;
+	console.log(results[0] === err) //true
+	console.log(results[2] === row) //true		
 
-console.log(results[0] === response) //true
-console.log(results[1] === data) //true
-console.log(results[2] === status) //true  
+
+	err = sqlResults[0];
+	if (err) throw err;
+	rows = sqlResults[2];
+
+
+
+		
+  
  ```
 
 
