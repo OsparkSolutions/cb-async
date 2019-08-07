@@ -1,7 +1,7 @@
 # CB Async: Callback Async
 A compact function for handling callbacks as Promises. Just create the cb-async handler, pass it as your callback, and await the results. 
 
-**No Nesting!, No Wrapping!, Just a handle to the callback!**
+**No Nesting! No Wrapping! Just a handle to the callback!**
 
 Includes multiple builds, Typescript files is included for custom builds (see builds below). Examples are in ES2017. Module requires at least ES6 to run. If you need to stay backwards compatible use TypeScript or Babel.  No excuses anymore!
 
