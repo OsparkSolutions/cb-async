@@ -83,6 +83,7 @@ function checkFBLogin() {
 
 ### function CBAsync(handler)
 Parameters: 
+
 **handler** (optional) - When provided, this function is executed prior to resolving awaiter/promise. This can be an async function/promise. In which case it will be awaited. The 'this' value is set according the the callback, and all of the callback parameters can be accessed in this function. This is primarily for readability or to potentially branch to a set of different tasks independent of the result thread.  
 
 Returns: **Proxy**
