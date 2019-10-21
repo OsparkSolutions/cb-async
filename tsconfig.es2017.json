@@ -4,6 +4,7 @@
     "target": "es2017",
     "lib": [ "es2017", "dom" ],
     "module": "ES6",
+    "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     "outDir": "src/ES2017"
   }
 }

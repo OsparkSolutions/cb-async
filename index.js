@@ -12,13 +12,16 @@ let callbackAsyncHandler = {
     apply: (t, thisArg, args) => __awaiter(this, void 0, void 0, function* () {
         let handler = t.handler;
         let resolver = t.resolver;
+        let handleOut;
         if (handler)
-            yield handler.apply(thisArg, args);
+            handleOut = yield handler.apply(thisArg, args);
         if (args.length === 1) {
             resolver(args[0]);
         }
         else
             resolver(args);
+        if (handleOut)
+            return handleOut;
     }),
     get: (target, prop) => {
         if (prop == 'then' || prop == 'catch') {

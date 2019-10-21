@@ -2,14 +2,18 @@ let callbackAsyncHandler = {
     apply: async (t, thisArg, args) => {
         let handler: Function = t.handler;
         let resolver: Function = t.resolver;
-        if (handler)
-            await handler.apply(thisArg, args);
 
+        let handleOut;
+        if (handler)
+            handleOut = await handler.apply(thisArg, args);
 
         if (args.length === 1) {
             resolver(args[0]);
         }
         else resolver(args)
+
+        if (handleOut)
+            return handleOut;
 
     },
     get: (target, prop) => {
@@ -23,7 +27,9 @@ let callbackAsyncHandler = {
     }
 }
 
-export default function CBAsync(handler?) {
+export type CBAsync<T> = (Promise<T> & ((...args: any[]) => any));
+
+export default function CBAsync<T = any>(handler?:(...args: any[]) => any): CBAsync<T> {
     let target: any = async function (...args) {
         await callbackAsyncHandler.apply(target, this, args);
     };

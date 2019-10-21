@@ -2,13 +2,16 @@ let callbackAsyncHandler = {
     apply: async (t, thisArg, args) => {
         let handler = t.handler;
         let resolver = t.resolver;
+        let handleOut;
         if (handler)
-            await handler.apply(thisArg, args);
+            handleOut = await handler.apply(thisArg, args);
         if (args.length === 1) {
             resolver(args[0]);
         }
         else
             resolver(args);
+        if (handleOut)
+            return handleOut;
     },
     get: (target, prop) => {
         if (prop == 'then' || prop == 'catch') {
@@ -31,4 +34,5 @@ export default function CBAsync(handler) {
         target.resolver = resolve;
     });
     return new Proxy(target, callbackAsyncHandler);
-};
+}
+;

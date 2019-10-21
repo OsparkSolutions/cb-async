@@ -3,7 +3,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "lib": [ "es6" ]
+    "lib": [ "es6" ],
+    "declaration": true /* Generates corresponding '.d.ts' file. */
   },
   "exclude": ["src"]
 }
